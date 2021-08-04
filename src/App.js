@@ -17,21 +17,25 @@
 // QUESTION 3
 // use the data and display name of the user and picture 
 
+// Question 4
+// create a button when you click on that button, it should display more users info
+
 import  React from 'react';
 // import './App.css';
 import axios from 'axios';
 
 
-
+// to display the data on load
 const {useEffect,useState} = React;
 
+// fetching the data 
 const fetchRandomData =() => {
   return axios
   .get("https://randomUser.me/api")
   .then(({ data}) => {
     // handle success
     console.log(data);
-    return JSON.stringify(data, null, 2);
+    return data;
   })
   .catch((err) => {
     // handle error
@@ -40,19 +44,40 @@ const fetchRandomData =() => {
 };
 
 
+// function to get info
+const getFullUserName = (userInfo) => {
+  const {name: {first, last}} =userInfo;
+  return `${first} ${last}`;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function App() {
 
   // keep track of counter state
   const [counter, setCounter]= useState(0);
-
+// random user data
   const[randomUserDataJSON, setRandomUserDataJSON] = useState("");
+// user info for name and image
+  const [userInfos, setUserInfos] = useState([])
 
   useEffect(() => {
 
     fetchRandomData().then(randomData => {
-      setRandomUserDataJSON(randomData || 'No user data found.');
+      setRandomUserDataJSON(JSON.stringify(randomData, null, 2) || 'No user data found.')
+      // results for displaying name and imgs
+      setUserInfos(randomData.results);
     })
   }, []);
 
@@ -65,7 +90,7 @@ function App() {
       <p>
         {counter}
       </p>
-      
+      {/* button for first question */}
       <button onClick={()=> {
         setCounter(counter +1);
         }}>
@@ -77,6 +102,17 @@ function App() {
           Decrease counter
         </button>
 
+        {/* to display name and image */}
+        {
+          userInfos.map((userInfo)=> (
+            <div > 
+              <p>{getFullUserName(userInfo)}</p>
+              <img src={userInfo.picture.thumbnail} alt="any"/>
+            </div>
+         
+          ))
+        }
+{/* data display for second question  */}
         <pre>
           {randomUserDataJSON}
         </pre>
